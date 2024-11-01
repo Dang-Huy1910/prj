@@ -66,7 +66,7 @@
                             </c:choose>
                         </td>
                         <td>
-                            <form action="view" method="POST" style="display:inline;">
+                            <form action="view-detail" method="POST" style="display:inline;">
                                 <input type="hidden" name="id" value="${plan.plid}">
                                 <button type="submit" class="btn btn-warning">View</button>
                             </form>

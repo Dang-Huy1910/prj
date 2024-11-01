@@ -51,6 +51,28 @@ public class PlanHeaderDAO {
         }
         return null; // Return null if no PlanHeader found
     }
+    public List<PlanHeader> getPlanHeaderByPlanId(int id) throws SQLException {
+        List<PlanHeader> planHeaders = new ArrayList<>();
+        String sql = "SELECT * FROM PlanHeaders WHERE [plid] = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                PlanDAO planDAO = new PlanDAO(connection);
+                ProductDAO productDAO = new ProductDAO(connection);
+                Plan plan = planDAO.getPlan(resultSet.getInt("pid"));
+                Product product = productDAO.getProduct(resultSet.getInt("pid"));
+                PlanHeader planHeader = new PlanHeader(
+                    resultSet.getInt("phid"),
+                    plan,
+                    product,
+                    resultSet.getInt("quantity")
+                );
+                planHeaders.add(planHeader);
+            }
+        }
+        return planHeaders; // Return null if no PlanHeader found
+    }
 
     // Read all
     public List<PlanHeader> getAllPlanHeaders() throws SQLException {
