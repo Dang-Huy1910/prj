@@ -36,9 +36,8 @@
                 <li class="list-group-item px-3 border-0 active text-center mt-5 mb-3" aria-current="true">
                     Phòng Kế hoạch Sản xuất
                 </li>
-                <li class="list-group-item px-3 border-0"><a>Tạo kế hoạch làm việc</a></li>
-                <li class="list-group-item px-3 border-0"><a>Chỉnh sửa kế hoạch làm việc</a></li>
-                <li class="list-group-item px-3 border-0"><a>Xác định khối lượng công việc</a></li>
+                <li class="list-group-item px-3 border-0"><a href="plan/add-plan">Tạo kế hoạch làm việc</a></li>
+                <li class="list-group-item px-3 border-0"><a href="plan/plans">Chỉnh sửa kế hoạch làm việc</a></li>
 
 
             </ul>  

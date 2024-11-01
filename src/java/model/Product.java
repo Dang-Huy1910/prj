@@ -14,6 +14,9 @@ public class Product {
     private float estimation;
     private String description;
 
+    public Product() {
+    }
+    
     public Product(int pid, String pname, float estimation, String description) {
         this.pid = pid;
         this.pname = pname;

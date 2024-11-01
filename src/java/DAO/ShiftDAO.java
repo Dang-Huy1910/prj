@@ -61,8 +61,8 @@ public class ShiftDAO {
                 return new Shift(
                         rs.getInt("sid"),
                         rs.getString("sname"),
-                        rs.getDate("startTime"),
-                        rs.getDate("endTime")
+                        null,
+                        null
                 );
             }
         }

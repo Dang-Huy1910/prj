@@ -9,16 +9,22 @@ import java.sql.Date;
 
 public class PlanDetails {
     private int pdid;
-    private PlanHeader planHeader;
+    private Plan plan;
     private Shift shift;
     private java.sql.Date date;
+    private Product product;
     private int quantity;
 
-    public PlanDetails(int pdid, PlanHeader planHeader, Shift shift, Date date, int quantity) {
+    public PlanDetails() {
+    }
+    
+    
+    public PlanDetails(int pdid, Plan plan, Shift shift, Date date, Product product, int quantity) {
         this.pdid = pdid;
-        this.planHeader = planHeader;
+        this.plan = plan;
         this.shift = shift;
         this.date = date;
+        this.product = product;
         this.quantity = quantity;
     }
 
@@ -30,12 +36,12 @@ public class PlanDetails {
         this.pdid = pdid;
     }
 
-    public PlanHeader getPlanHeader() {
-        return planHeader;
+    public Plan getPlan() {
+        return plan;
     }
 
-    public void setPlanHeader(PlanHeader planHeader) {
-        this.planHeader = planHeader;
+    public void setPlan(Plan plan) {
+        this.plan = plan;
     }
 
     public Shift getShift() {
@@ -54,6 +60,14 @@ public class PlanDetails {
         this.date = date;
     }
 
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
     public int getQuantity() {
         return quantity;
     }
@@ -61,6 +75,7 @@ public class PlanDetails {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
+
     
     
 }

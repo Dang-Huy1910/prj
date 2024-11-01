@@ -87,6 +87,59 @@ public class PlanDAO {
         }
         return plans;
     }
+    public List<Plan> getAllPlansPublic() throws SQLException {
+        List<Plan> plans = new ArrayList<>();
+        String sql = "SELECT * FROM Plans where [statusid] <> 1 and [statusid] <> 4";
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
+            while (resultSet.next()) {
+                DepartmentDAO departmentDAO = new DepartmentDAO(connection);
+                StatusDAO statusDAO = new StatusDAO(connection);
+                EmployeeDAO employeeDAO = new EmployeeDAO(connection);
+                Department department = departmentDAO.getDepartmentById(resultSet.getInt("did"));
+                Status status = statusDAO.getStatus(resultSet.getInt("statusid"));
+                Employee manager = employeeDAO.getEmployee(resultSet.getInt("eid"));
+                Plan plan =  new Plan(
+                    resultSet.getInt("plid"),
+                    resultSet.getString("plname"),
+                    resultSet.getDate("startdate"),
+                    resultSet.getDate("enddate"),
+                    department,
+                    status,
+                    manager
+                );
+                plans.add(plan);
+            }
+        }
+        return plans;
+    }
+        public List<Plan> getAllPlansPublicByManager(int eid) throws SQLException {
+        List<Plan> plans = new ArrayList<>();
+        String sql = "SELECT * FROM Plans where [statusid] <> 1 and [statusid] <> 4 and eid = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)){
+             statement.setInt(1, eid);
+             ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                DepartmentDAO departmentDAO = new DepartmentDAO(connection);
+                StatusDAO statusDAO = new StatusDAO(connection);
+                EmployeeDAO employeeDAO = new EmployeeDAO(connection);
+                Department department = departmentDAO.getDepartmentById(resultSet.getInt("did"));
+                Status status = statusDAO.getStatus(resultSet.getInt("statusid"));
+                Employee manager = employeeDAO.getEmployee(resultSet.getInt("eid"));
+                Plan plan =  new Plan(
+                    resultSet.getInt("plid"),
+                    resultSet.getString("plname"),
+                    resultSet.getDate("startdate"),
+                    resultSet.getDate("enddate"),
+                    department,
+                    status,
+                    manager
+                );
+                plans.add(plan);
+            }
+        }
+        return plans;
+    }
 
     // Update
     public void updatePlan(Plan plan) throws SQLException {

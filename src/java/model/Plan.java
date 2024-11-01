@@ -14,6 +14,9 @@ public class Plan {
     private Status status;
     private Employee manager;
 
+    public Plan() {
+    }
+    
     public Plan(int plid, String plname, Date startDate, Date endDate, Department department, Status status, Employee manager) {
         this.plid = plid;
         this.plname = plname;

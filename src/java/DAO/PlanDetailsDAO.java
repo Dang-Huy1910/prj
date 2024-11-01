@@ -1,16 +1,13 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package DAO;
-
 
 import model.PlanDetails;
 import model.PlanHeader;
 import model.Shift;
+import model.Product;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import model.Plan;
 
 public class PlanDetailsDAO {
     private Connection connection;
@@ -18,17 +15,20 @@ public class PlanDetailsDAO {
     public PlanDetailsDAO(Connection connection) {
         this.connection = connection;
     }
+
     public PlanDetailsDAO() {
         this.connection = JDBC.getConnection();
     }
+
     // Create
     public void addPlanDetails(PlanDetails planDetails) throws SQLException {
-        String sql = "INSERT INTO PlanDetails (phid, sid, date, quantity) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO PlanDetails (plid, sid, date, quantity, pid) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, planDetails.getPlanHeader() != null ? planDetails.getPlanHeader().getPhid() : 0); // Get PlanHeader ID
+            statement.setInt(1, planDetails.getPlan() != null ? planDetails.getPlan().getPlid(): 0); // Get Plan ID
             statement.setInt(2, planDetails.getShift() != null ? planDetails.getShift().getSid() : 0); // Get Shift ID
             statement.setDate(3, planDetails.getDate());
             statement.setInt(4, planDetails.getQuantity());
+            statement.setInt(5, planDetails.getProduct() != null ? planDetails.getProduct().getPid(): 0); // Get Product ID
             statement.executeUpdate();
         }
     }
@@ -40,15 +40,18 @@ public class PlanDetailsDAO {
             statement.setInt(1, pdid);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                PlanHeaderDAO planHeaderDAO = new PlanHeaderDAO(connection);
+                PlanDAO planHeaderDAO = new PlanDAO(connection);
                 ShiftDAO shiftDAO = new ShiftDAO(connection);
-                PlanHeader planHeader = planHeaderDAO.getPlanHeader(resultSet.getInt("phid")); // Get PlanHeader by ID
+                ProductDAO productDAO = new ProductDAO(connection); // Create a DAO for Product
+                Plan planHeader = planHeaderDAO.getPlan(resultSet.getInt("plid")); // Get PlanHeader by ID
                 Shift shift = shiftDAO.getShiftById(resultSet.getInt("sid")); // Get Shift by ID
+                Product product = productDAO.getProduct(resultSet.getInt("pid")); // Get Product by ID
                 return new PlanDetails(
                     resultSet.getInt("pdid"),
                     planHeader,
                     shift,
                     resultSet.getDate("date"),
+                    product,
                     resultSet.getInt("quantity")
                 );
             }
@@ -57,24 +60,28 @@ public class PlanDetailsDAO {
     }
 
     // Read all
-    public List<PlanDetails> getAllPlanDetails() throws SQLException {
+    public List<PlanDetails> getAllPlanDetailsByPlanId(int id) throws SQLException {
         List<PlanDetails> planDetailsList = new ArrayList<>();
-        String sql = "SELECT * FROM PlanDetails";
-        try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(sql)) {
+        String sql = "SELECT * FROM PlanDetails   where plid = ?";
+       try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                PlanHeaderDAO planHeaderDAO = new PlanHeaderDAO(connection);
+               PlanDAO planHeaderDAO = new PlanDAO(connection);
                 ShiftDAO shiftDAO = new ShiftDAO(connection);
-                PlanHeader planHeader = planHeaderDAO.getPlanHeader(resultSet.getInt("phid")); // Get PlanHeader by ID
+                ProductDAO productDAO = new ProductDAO(connection); // Create a DAO for Product
+                Plan planHeader = planHeaderDAO.getPlan(resultSet.getInt("plid")); // Get PlanHeader by ID
                 Shift shift = shiftDAO.getShiftById(resultSet.getInt("sid")); // Get Shift by ID
-                PlanDetails planDetails = new PlanDetails(
+                Product product = productDAO.getProduct(resultSet.getInt("pid")); // Get Product by ID
+                PlanDetails details = new PlanDetails(
                     resultSet.getInt("pdid"),
                     planHeader,
                     shift,
                     resultSet.getDate("date"),
+                    product,
                     resultSet.getInt("quantity")
                 );
-                planDetailsList.add(planDetails);
+                planDetailsList.add(details);
             }
         }
         return planDetailsList;
@@ -82,13 +89,23 @@ public class PlanDetailsDAO {
 
     // Update
     public void updatePlanDetails(PlanDetails planDetails) throws SQLException {
-        String sql = "UPDATE PlanDetails SET phid = ?, sid = ?, date = ?, quantity = ? WHERE pdid = ?";
+        String sql = "UPDATE PlanDetails SET plid = ?, sid = ?, date = ?, quantity = ?, pid = ? WHERE pdid = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, planDetails.getPlanHeader() != null ? planDetails.getPlanHeader().getPhid() : 0);
+            statement.setInt(1, planDetails.getPlan() != null ? planDetails.getPlan().getPlid(): 0);
             statement.setInt(2, planDetails.getShift() != null ? planDetails.getShift().getSid() : 0);
             statement.setDate(3, planDetails.getDate());
             statement.setInt(4, planDetails.getQuantity());
-            statement.setInt(5, planDetails.getPdid());
+            statement.setInt(5, planDetails.getProduct() != null ? planDetails.getProduct().getPid(): 0);
+            statement.setInt(6, planDetails.getPdid());
+            statement.executeUpdate();
+        }
+    }
+     public void updateQuantity(int pdid , int quantityNew) throws SQLException {
+        String sql = "UPDATE PlanDetails SET  quantity = ? WHERE pdid = ? and quantity <> ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, quantityNew);
+            statement.setInt(2, pdid);
+            statement.setInt(3, quantityNew);
             statement.executeUpdate();
         }
     }

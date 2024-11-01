@@ -76,13 +76,13 @@ public class PlanHeaderDAO {
     }
 
     // Update
-    public void updatePlanHeader(PlanHeader planHeader) throws SQLException {
-        String sql = "UPDATE PlanHeaders SET plid = ?, pid = ?, quantity = ? WHERE phid = ?";
+    public void updatePlanHeader(int planId,int productId,int quantity) throws SQLException {
+        String sql = "UPDATE PlanHeaders SET  quantity = ? WHERE plid = ?&& pid = ? && quantity <> ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, planHeader.getPlan() != null ? planHeader.getPlan().getPlid() : null);
-            statement.setInt(2, planHeader.getProduct() != null ? planHeader.getProduct().getPid() : null);
-            statement.setInt(3, planHeader.getQuantity());
-            statement.setInt(4, planHeader.getPhid());
+            statement.setInt(1, quantity);
+            statement.setInt(2, planId);
+            statement.setInt(3, productId);
+            statement.setInt(4, quantity);
             statement.executeUpdate();
         }
     }

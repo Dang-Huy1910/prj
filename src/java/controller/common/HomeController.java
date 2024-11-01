@@ -24,6 +24,8 @@ public class HomeController extends AuthenticationServlet{
     protected void doGet(HttpServletRequest req, HttpServletResponse resp, User user) throws ServletException, IOException {
         if(user.getRole().getRid() == 3)
             req.getRequestDispatcher("view/planning/home.jsp").forward(req, resp);
+        else if(user.getRole().getRid() == 5)
+            req.getRequestDispatcher("view/manager/home.jsp").forward(req, resp);
     }
     
 }
